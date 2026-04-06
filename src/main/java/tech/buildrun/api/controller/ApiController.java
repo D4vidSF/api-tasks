@@ -3,7 +3,7 @@ package tech.buildrun.api.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.buildrun.api.repository.TaskRepository;
-import tech.buildrun.api.model.Task; // 👈 FALTA ISSO AQUI
+import tech.buildrun.api.model.Task;
 
 import java.util.List;
 
