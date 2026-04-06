@@ -17,13 +17,13 @@ public class ApiController {
         this.repository = repository;
     }
 
-    // 🔹 GET - buscar todas as tasks
+    //GET buscar todas as tasks
     @GetMapping
     public List<Task> listTasks() {
         return repository.findAll();
     }
 
-    // 🔹 GET - buscar por ID
+    // GET buscar por ID
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         return repository.findById(id)
@@ -31,13 +31,13 @@ public class ApiController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // 🔹 POST - criar task
+    // POST - criar task
     @PostMapping
     public Task createTask(@RequestBody Task task) {
         return repository.save(task);
     }
 
-    // 🔹 PUT - atualizar task
+    // PUT - atualizar task
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
 
@@ -51,7 +51,7 @@ public class ApiController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // 🔹 DELETE - deletar por ID
+    // DELETE - deletar por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         repository.deleteById(id);
