@@ -39,7 +39,23 @@ public class ApiController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Void> deleteTasks(){ tasks = new ArrayList<>(); return ResponseEntity.ok().build();
+    public ResponseEntity<Void> deleteTasks(){
+        tasks = new ArrayList<>(); return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
+
+        for (Task task : tasks) {
+            if (task.getId().equals(id)) {
+                task.setName(updatedTask.getName());
+                task.setDescription(updatedTask.getDescription());
+                task.setStatus(updatedTask.getStatus());
+
+                return ResponseEntity.ok(task);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
