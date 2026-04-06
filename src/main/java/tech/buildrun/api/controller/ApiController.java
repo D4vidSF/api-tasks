@@ -37,4 +37,9 @@ public class ApiController {
         tasks.add(task);
         return task;
     }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> deleteTasks(){ tasks = new ArrayList<>(); return ResponseEntity.ok().build();
+    }
+
 }
