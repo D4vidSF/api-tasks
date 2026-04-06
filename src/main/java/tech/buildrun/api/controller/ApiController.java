@@ -2,60 +2,59 @@ package tech.buildrun.api.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tech.buildrun.api.repository.TaskRepository;
+import tech.buildrun.api.model.Task; // 👈 FALTA ISSO AQUI
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/tasks")
 public class ApiController {
 
-    private Long idCounter = 1L;
-    private List<Task> tasks = new ArrayList<>();
+    private final TaskRepository repository;
 
-    //GET PARA BUSCAR TODOS OS RESULTADOS
+    public ApiController(TaskRepository repository) {
+        this.repository = repository;
+    }
+
+    // 🔹 GET - buscar todas as tasks
     @GetMapping
     public List<Task> listTasks() {
-        return tasks;
+        return repository.findAll();
     }
 
-    //GET PARA BUSCAR POR ID
-    @GetMapping(path = "/{id}")
+    // 🔹 GET - buscar por ID
+    @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        for (Task task : tasks) {
-            if (task.getId().equals(id)) {
-                return ResponseEntity.ok(task);
-            }
-        }
-        return ResponseEntity.notFound().build();
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    //POST
+    // 🔹 POST - criar task
     @PostMapping
     public Task createTask(@RequestBody Task task) {
-        task.setId(idCounter++);
-        tasks.add(task);
-        return task;
+        return repository.save(task);
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Void> deleteTasks(){
-        tasks = new ArrayList<>(); return ResponseEntity.ok().build();
-    }
-
+    // 🔹 PUT - atualizar task
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
 
-        for (Task task : tasks) {
-            if (task.getId().equals(id)) {
-                task.setName(updatedTask.getName());
-                task.setDescription(updatedTask.getDescription());
-                task.setStatus(updatedTask.getStatus());
+        return repository.findById(id)
+                .map(task -> {
+                    task.setName(updatedTask.getName());
+                    task.setDescription(updatedTask.getDescription());
+                    task.setStatus(updatedTask.getStatus());
+                    return ResponseEntity.ok(repository.save(task));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-                return ResponseEntity.ok(task);
-            }
-        }
-
-        return ResponseEntity.notFound().build();
+    // 🔹 DELETE - deletar por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        repository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
